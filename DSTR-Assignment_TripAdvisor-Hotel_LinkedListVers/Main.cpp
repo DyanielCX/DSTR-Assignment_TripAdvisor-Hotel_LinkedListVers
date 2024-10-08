@@ -5,7 +5,7 @@
 #include "ReadInput.hpp"
 //#include "DataRefresh_Menu.hpp"
 #include "RevAnalysis_Menu.hpp"
-//#include "Summary.hpp"
+#include "Summary.hpp"
 using namespace std;
 
 const int CSV_lines = 20491;    // Number of lines in the csv file
@@ -23,6 +23,10 @@ int main() {
     PowWord* POS_Tail = nullptr;
     NegWord* NEG_Head = nullptr;
     NegWord* NEG_Tail = nullptr;
+    WordFreqNode* POS_Fre_Head = nullptr;
+    WordFreqNode* POS_Fre_Tail = nullptr;
+    WordFreqNode* NEG_Fre_Head = nullptr;
+    WordFreqNode* NEG_Fre_Tail = nullptr;
 
     fileReader.readCSV(RevRat_Head, RevRat_Tail, CSV_lines);
     fileReader.readPositiveWords(POS_Head, POS_Tail, POS_WORDS);
@@ -81,7 +85,9 @@ int main() {
             countSentimentWord(RevRat_Head, POS_Head, NEG_Head, CSV_lines);  // Function call to RevAnalysis_Menu.hpp
             break;
         case 3:     // Show Summary
-            //summary(Review_Data, PosWord_Data, NegWord_Data, CSV_lines, POS_WORDS, NEG_WORDS);
+            // Call the summary function here with the appropriate parameters
+            summary(RevRat_Head, POS_Fre_Head, NEG_Fre_Head, CSV_lines);
+            // Update to your linked list structure
             cout << endl;
             break;
         case 4:     // Show All Positive Word
