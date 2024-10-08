@@ -25,11 +25,21 @@ struct WordFreqNode {
     }
 };
 
+// Define a Linked List Node for Min/Max Used Words
+struct WordNode {
+    string word;
+    WordNode* next;
+
+    WordNode(const string& w) : word(w), next(nullptr) {}
+};
+
 // Function prototypes
 inline void displayWordFreq(WordFreqNode* head, const string& wordType);
 inline void CheckWordOcc(string curReview, PowWord* posHead, NegWord* negHead, int& totalPosCount, int& totalNegCount);
-inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, string*& minUsedWords, string*& maxUsedWords, int& minFreq, int& maxFreq, int& minWordCount, int& maxWordCount);
-inline void displayWordUsage(const string* wordArray, int wordCount, int freq, const string& usageType);
+inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, WordNode*& minUsedWordsHead, WordNode*& maxUsedWordsHead, int& minFreq, int& maxFreq);
+inline void displayWordUsage(WordNode* wordList, int freq, const string& usageType);
+void addToList(WordNode*& head, const string& word);
+void deleteList(WordNode*& head);
 
 // Main summary function
 inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negHead, const int lineNum) {
@@ -89,20 +99,18 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     // Find the minimum and maximum used words
     int minFreq = INT_MAX;
     int maxFreq = 0;
-    int minWordCount = 0;
-    int maxWordCount = 0;
-    string* minUsedWords = nullptr;
-    string* maxUsedWords = nullptr;
+    WordNode* minUsedWordsHead = nullptr;
+    WordNode* maxUsedWordsHead = nullptr;
 
-    findMinMaxUsedWords(posHead, negHead, minUsedWords, maxUsedWords, minFreq, maxFreq, minWordCount, maxWordCount);
+    findMinMaxUsedWords(posHead, negHead, minUsedWordsHead, maxUsedWordsHead, minFreq, maxFreq);
 
     // Display max & min used words
-    displayWordUsage(maxUsedWords, maxWordCount, maxFreq, "Maximum");
-    displayWordUsage(minUsedWords, minWordCount, minFreq, "Minimum");
+    displayWordUsage(maxUsedWordsHead, maxFreq, "Maximum");
+    displayWordUsage(minUsedWordsHead, minFreq, "Minimum");
 
     // Clean up dynamically allocated memory for minUsedWords and maxUsedWords
-    delete[] minUsedWords;
-    delete[] maxUsedWords;
+    deleteList(minUsedWordsHead);
+    deleteList(maxUsedWordsHead);
 
     auto end = high_resolution_clock::now();  // End the timer
     auto duration = duration_cast<seconds>(end - start);
@@ -136,20 +144,22 @@ inline void CheckWordOcc(string curReview, PowWord* posHead, NegWord* negHead, i
     }
 }
 
-// Display word usage function
-inline void displayWordUsage(const string* wordArray, int wordCount, int freq, const string& usageType) {
+// Display word usage function for linked list
+inline void displayWordUsage(WordNode* wordList, int freq, const string& usageType) {
     cout << "\n" << usageType << " used words in the reviews: ";
-    for (int i = 0; i < wordCount; i++) {
-        cout << wordArray[i];
-        if (i < wordCount - 1) {
+    WordNode* current = wordList;
+    while (current != nullptr) {
+        cout << current->word;
+        if (current->next != nullptr) {
             cout << ", ";
         }
+        current = current->next;
     }
     cout << " (" << freq << " times)" << endl;
 }
 
-// Find min & max used words function
-inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, string*& minUsedWords, string*& maxUsedWords, int& minFreq, int& maxFreq, int& minWordCount, int& maxWordCount) {
+// Find min & max used words function using linked list
+inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, WordNode*& minUsedWordsHead, WordNode*& maxUsedWordsHead, int& minFreq, int& maxFreq) {
     minFreq = INT_MAX;
     maxFreq = 0;
 
@@ -159,18 +169,20 @@ inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, string*& min
         if (currentPos->frequency > 0) {
             if (currentPos->frequency < minFreq) {
                 minFreq = currentPos->frequency;
-                minWordCount = 1;
+                deleteList(minUsedWordsHead);
+                minUsedWordsHead = new WordNode(currentPos->word);
             }
             else if (currentPos->frequency == minFreq) {
-                minWordCount++;
+                addToList(minUsedWordsHead, currentPos->word);
             }
 
             if (currentPos->frequency > maxFreq) {
                 maxFreq = currentPos->frequency;
-                maxWordCount = 1;
+                deleteList(maxUsedWordsHead);
+                maxUsedWordsHead = new WordNode(currentPos->word);
             }
             else if (currentPos->frequency == maxFreq) {
-                maxWordCount++;
+                addToList(maxUsedWordsHead, currentPos->word);
             }
         }
         currentPos = currentPos->next;
@@ -182,52 +194,49 @@ inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, string*& min
         if (currentNeg->frequency > 0) {
             if (currentNeg->frequency < minFreq) {
                 minFreq = currentNeg->frequency;
-                minWordCount = 1;
+                deleteList(minUsedWordsHead);
+                minUsedWordsHead = new WordNode(currentNeg->word);
             }
             else if (currentNeg->frequency == minFreq) {
-                minWordCount++;
+                addToList(minUsedWordsHead, currentNeg->word);
             }
 
             if (currentNeg->frequency > maxFreq) {
                 maxFreq = currentNeg->frequency;
-                maxWordCount = 1;
+                deleteList(maxUsedWordsHead);
+                maxUsedWordsHead = new WordNode(currentNeg->word);
             }
             else if (currentNeg->frequency == maxFreq) {
-                maxWordCount++;
+                addToList(maxUsedWordsHead, currentNeg->word);
             }
-        }
-        currentNeg = currentNeg->next;
-    }
-
-    // Allocate arrays for min and max used words
-    minUsedWords = new string[minWordCount];
-    maxUsedWords = new string[maxWordCount];
-
-    int minIndex = 0;
-    int maxIndex = 0;
-
-    // Traverse again to store the words
-    currentPos = posHead;
-    while (currentPos != nullptr) {
-        if (currentPos->frequency == minFreq) {
-            minUsedWords[minIndex++] = currentPos->word;
-        }
-        if (currentPos->frequency == maxFreq) {
-            maxUsedWords[maxIndex++] = currentPos->word;
-        }
-        currentPos = currentPos->next;
-    }
-
-    currentNeg = negHead;
-    while (currentNeg != nullptr) {
-        if (currentNeg->frequency == minFreq) {
-            minUsedWords[minIndex++] = currentNeg->word;
-        }
-        if (currentNeg->frequency == maxFreq) {
-            maxUsedWords[maxIndex++] = currentNeg->word;
         }
         currentNeg = currentNeg->next;
     }
 }
 
+// Add a word to the linked list
+void addToList(WordNode*& head, const string& word) {
+    WordNode* newNode = new WordNode(word);
+    if (head == nullptr) {
+        head = newNode;
+    }
+    else {
+        WordNode* current = head;
+        while (current->next != nullptr) {
+            current = current->next;
+        }
+        current->next = newNode;
+    }
+}
+
+// Delete the linked list
+void deleteList(WordNode*& head) {
+    while (head != nullptr) {
+        WordNode* temp = head;
+        head = head->next;
+        delete temp;
+    }
+}
+
 #endif
+
