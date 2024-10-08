@@ -18,7 +18,11 @@ struct WordFreqNode {
     int frequency;
     WordFreqNode* next;
 
-    WordFreqNode(const string& w, int freq = 0) : word(w), frequency(freq), next(nullptr) {}
+    WordFreqNode(const string& Word, int freq = 0) {
+        word = Word;
+        frequency = freq;
+        next = nullptr;
+    }
 };
 
 // Function prototypes
@@ -87,7 +91,7 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     int maxFreq = 0;
     int minWordCount = 0;
     int maxWordCount = 0;
-    string* minUsedWords = nullptr;  // Use pointers to store min and max words
+    string* minUsedWords = nullptr;
     string* maxUsedWords = nullptr;
 
     findMinMaxUsedWords(posHead, negHead, minUsedWords, maxUsedWords, minFreq, maxFreq, minWordCount, maxWordCount);
