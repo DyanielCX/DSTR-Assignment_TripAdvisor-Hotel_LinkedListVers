@@ -23,33 +23,30 @@ struct WordFreqNode {
 
 // Function prototypes
 inline void displayWordFreq(WordFreqNode* head, const string& wordType);
-inline void CheckWordOcc(string curReview, WordFreqNode* head, int& totalCount);
-inline void findMinMaxUsedWords(WordFreqNode* head, string*& minUsedWords, string*& maxUsedWords, int& minFreq, int& maxFreq, int& minWordCount, int& maxWordCount);
+inline void CheckWordOcc(string curReview, PowWord* posHead, NegWord* negHead, int& totalPosCount, int& totalNegCount);
+inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, string*& minUsedWords, string*& maxUsedWords, int& minFreq, int& maxFreq, int& minWordCount, int& maxWordCount);
 inline void displayWordUsage(const string* wordArray, int wordCount, int freq, const string& usageType);
 
-
 // Main summary function
-inline void summary(ReviewAndRating* Review_Data, WordFreqNode* PosWord_Data, WordFreqNode* NegWord_Data, const int lineNum){
+inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negHead, const int lineNum) {
     cout << "\nProcessing the reviews... This might take some time. Please wait." << endl;
     auto start = high_resolution_clock::now();  // Start the timer
-
-    // Arrays to store the frequency of each positive and negative word
-    WordFreqNode* posWordFreqHead = nullptr;
-    WordFreqNode* negWordFreqHead = nullptr;
 
     int totalPosCount = 0;
     int totalNegCount = 0;
 
-    // Process each review
-    for (int i = 0; i < lineNum; i++) {
-        string curReview = Review_Data[i].review; // Adjust this line according to your struct
+    // Traverse through the ReviewAndRating linked list
+    ReviewAndRating* currentReview = reviewHead;
+    while (currentReview != nullptr) {
+        string curReview = currentReview->review;
 
         // Convert review to lowercase for case-insensitive matching
         transform(curReview.begin(), curReview.end(), curReview.begin(), ::tolower);
 
-        // Check for occurrences of positive words & negative word
-        CheckWordOcc(curReview, PosWord_Data, totalPosCount);
-        CheckWordOcc(curReview, NegWord_Data, totalNegCount);
+        // Check occurrences of positive and negative words
+        CheckWordOcc(curReview, posHead, negHead, totalPosCount, totalNegCount);
+
+        currentReview = currentReview->next;  // Move to the next review
     }
 
     // Title design
@@ -66,9 +63,24 @@ inline void summary(ReviewAndRating* Review_Data, WordFreqNode* PosWord_Data, Wo
     cout << "Total Counts of positive words = " << totalPosCount << endl;
     cout << "Total Counts of negative words = " << totalNegCount << endl;
 
-    // Display frequency of each positive word & negative word used
-    displayWordFreq(posWordFreqHead, "positive");
-    displayWordFreq(negWordFreqHead, "negative");
+    // Display word frequencies
+    cout << "\nFrequency of Positive Words:\n";
+    PowWord* posCurrent = posHead;
+    while (posCurrent != nullptr) {
+        if (posCurrent->frequency > 0) {
+            cout << posCurrent->word << " = " << posCurrent->frequency << " times\n";
+        }
+        posCurrent = posCurrent->next;
+    }
+
+    cout << "\nFrequency of Negative Words:\n";
+    NegWord* negCurrent = negHead;
+    while (negCurrent != nullptr) {
+        if (negCurrent->frequency > 0) {
+            cout << negCurrent->word << " = " << negCurrent->frequency << " times\n";
+        }
+        negCurrent = negCurrent->next;
+    }
 
     // Find the minimum and maximum used words
     int minFreq = INT_MAX;
@@ -78,8 +90,7 @@ inline void summary(ReviewAndRating* Review_Data, WordFreqNode* PosWord_Data, Wo
     string* minUsedWords = nullptr;  // Use pointers to store min and max words
     string* maxUsedWords = nullptr;
 
-    findMinMaxUsedWords(posWordFreqHead, minUsedWords, maxUsedWords, minFreq, maxFreq, minWordCount, maxWordCount);
-    findMinMaxUsedWords(negWordFreqHead, minUsedWords, maxUsedWords, minFreq, maxFreq, minWordCount, maxWordCount);
+    findMinMaxUsedWords(posHead, negHead, minUsedWords, maxUsedWords, minFreq, maxFreq, minWordCount, maxWordCount);
 
     // Display max & min used words
     displayWordUsage(maxUsedWords, maxWordCount, maxFreq, "Maximum");
@@ -99,71 +110,25 @@ inline void summary(ReviewAndRating* Review_Data, WordFreqNode* PosWord_Data, Wo
 }
 
 // Check word occurrences function
-inline void CheckWordOcc(string curReview, WordFreqNode* head, int& totalCount) {
-    WordFreqNode* current = head;
-    while (current != nullptr) {
-        if (curReview.find(current->word) != string::npos) {
-            current->frequency++;
-            totalCount++;
+inline void CheckWordOcc(string curReview, PowWord* posHead, NegWord* negHead, int& totalPosCount, int& totalNegCount) {
+    // Traverse positive words
+    PowWord* currentPos = posHead;
+    while (currentPos != nullptr) {
+        if (curReview.find(currentPos->word) != string::npos) {
+            currentPos->frequency++;
+            totalPosCount++;
         }
-        current = current->next;
-    }
-}
-
-// Display word frequency function
-inline void displayWordFreq(WordFreqNode* head, const string& wordType) {
-    cout << "\nFrequency of each " << wordType << " word in reviews : \n";
-    WordFreqNode* current = head;
-    while (current != nullptr) {
-        if (current->frequency > 0) {
-            cout << current->word << " = " << current->frequency << " times" << endl;
-        }
-        current = current->next;
-    }
-}
-
-// Find min & max used function
-inline void findMinMaxUsedWords(WordFreqNode* head, string*& minUsedWords, string*& maxUsedWords, int& minFreq, int& maxFreq, int& minWordCount, int& maxWordCount) {
-    minFreq = INT_MAX;
-    maxFreq = 0;
-
-    WordFreqNode* current = head;
-    while (current != nullptr) {
-        if (current->frequency > 0) {
-            if (current->frequency < minFreq) {
-                minFreq = current->frequency;
-                minWordCount = 1;
-            }
-            else if (current->frequency == minFreq) {
-                minWordCount++;
-            }
-
-            if (current->frequency > maxFreq) {
-                maxFreq = current->frequency;
-                maxWordCount = 1;
-            }
-            else if (current->frequency == maxFreq) {
-                maxWordCount++;
-            }
-        }
-        current = current->next;
+        currentPos = currentPos->next;
     }
 
-    // Allocate arrays for min and max used words
-    minUsedWords = new string[minWordCount];
-    maxUsedWords = new string[maxWordCount];
-
-    int minIndex = 0;
-    int maxIndex = 0;
-    current = head;
-    while (current != nullptr) {
-        if (current->frequency == minFreq) {
-            minUsedWords[minIndex++] = current->word;
+    // Traverse negative words
+    NegWord* currentNeg = negHead;
+    while (currentNeg != nullptr) {
+        if (curReview.find(currentNeg->word) != string::npos) {
+            currentNeg->frequency++;
+            totalNegCount++;
         }
-        if (current->frequency == maxFreq) {
-            maxUsedWords[maxIndex++] = current->word;
-        }
-        current = current->next;
+        currentNeg = currentNeg->next;
     }
 }
 
@@ -177,6 +142,88 @@ inline void displayWordUsage(const string* wordArray, int wordCount, int freq, c
         }
     }
     cout << " (" << freq << " times)" << endl;
+}
+
+// Find min & max used words function
+inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, string*& minUsedWords, string*& maxUsedWords, int& minFreq, int& maxFreq, int& minWordCount, int& maxWordCount) {
+    minFreq = INT_MAX;
+    maxFreq = 0;
+
+    // Traverse positive words
+    PowWord* currentPos = posHead;
+    while (currentPos != nullptr) {
+        if (currentPos->frequency > 0) {
+            if (currentPos->frequency < minFreq) {
+                minFreq = currentPos->frequency;
+                minWordCount = 1;
+            }
+            else if (currentPos->frequency == minFreq) {
+                minWordCount++;
+            }
+
+            if (currentPos->frequency > maxFreq) {
+                maxFreq = currentPos->frequency;
+                maxWordCount = 1;
+            }
+            else if (currentPos->frequency == maxFreq) {
+                maxWordCount++;
+            }
+        }
+        currentPos = currentPos->next;
+    }
+
+    // Traverse negative words
+    NegWord* currentNeg = negHead;
+    while (currentNeg != nullptr) {
+        if (currentNeg->frequency > 0) {
+            if (currentNeg->frequency < minFreq) {
+                minFreq = currentNeg->frequency;
+                minWordCount = 1;
+            }
+            else if (currentNeg->frequency == minFreq) {
+                minWordCount++;
+            }
+
+            if (currentNeg->frequency > maxFreq) {
+                maxFreq = currentNeg->frequency;
+                maxWordCount = 1;
+            }
+            else if (currentNeg->frequency == maxFreq) {
+                maxWordCount++;
+            }
+        }
+        currentNeg = currentNeg->next;
+    }
+
+    // Allocate arrays for min and max used words
+    minUsedWords = new string[minWordCount];
+    maxUsedWords = new string[maxWordCount];
+
+    int minIndex = 0;
+    int maxIndex = 0;
+
+    // Traverse again to store the words
+    currentPos = posHead;
+    while (currentPos != nullptr) {
+        if (currentPos->frequency == minFreq) {
+            minUsedWords[minIndex++] = currentPos->word;
+        }
+        if (currentPos->frequency == maxFreq) {
+            maxUsedWords[maxIndex++] = currentPos->word;
+        }
+        currentPos = currentPos->next;
+    }
+
+    currentNeg = negHead;
+    while (currentNeg != nullptr) {
+        if (currentNeg->frequency == minFreq) {
+            minUsedWords[minIndex++] = currentNeg->word;
+        }
+        if (currentNeg->frequency == maxFreq) {
+            maxUsedWords[maxIndex++] = currentNeg->word;
+        }
+        currentNeg = currentNeg->next;
+    }
 }
 
 #endif

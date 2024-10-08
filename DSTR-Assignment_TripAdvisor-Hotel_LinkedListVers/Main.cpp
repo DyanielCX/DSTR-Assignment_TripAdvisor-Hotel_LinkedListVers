@@ -82,13 +82,10 @@ int main() {
             //refreshData(Review_Data, PosWord_Data, NegWord_Data, CSV_lines, POS_WORDS, NEG_WORDS);
             break;
         case 2:     // Review Analysis
-            countSentimentWord(RevRat_Head, POS_Head, NEG_Head, CSV_lines);  // Function call to RevAnalysis_Menu.hpp
+            countSentimentWord(RevRat_Head, POS_Head, NEG_Head, CSV_lines);  
             break;
         case 3:     // Show Summary
-            // Call the summary function here with the appropriate parameters
-            summary(RevRat_Head, POS_Fre_Head, NEG_Fre_Head, CSV_lines);
-            // Update to your linked list structure
-            cout << endl;
+            summary(RevRat_Head, POS_Head, NEG_Head, CSV_lines);
             break;
         case 4:     // Show All Positive Word
             fileReader.showPosWord(POS_Head);
