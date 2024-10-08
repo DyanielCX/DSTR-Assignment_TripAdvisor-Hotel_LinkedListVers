@@ -52,4 +52,13 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="tripadvisor_hotel_reviews.csv">
+      <Filter>Resource Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="negative-words.txt" />
+    <Text Include="positive-words.txt" />
+  </ItemGroup>
 </Project>
