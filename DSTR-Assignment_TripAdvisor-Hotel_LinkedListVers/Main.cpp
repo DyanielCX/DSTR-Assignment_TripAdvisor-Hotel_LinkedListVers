@@ -4,7 +4,7 @@
 #include <string>
 #include "ReadInput.hpp"
 //#include "DataRefresh_Menu.hpp"
-//#include "RevAnalysis_Menu.hpp"
+#include "RevAnalysis_Menu.hpp"
 //#include "Summary.hpp"
 using namespace std;
 
@@ -78,7 +78,7 @@ int main() {
             //refreshData(Review_Data, PosWord_Data, NegWord_Data, CSV_lines, POS_WORDS, NEG_WORDS);
             break;
         case 2:     // Review Analysis
-            //countSentimentWord(Review_Data, PosWord_Data, NegWord_Data, CSV_lines, POS_WORDS, NEG_WORDS);
+            countSentimentWord(RevRat_Head, POS_Head, NEG_Head, CSV_lines);  // Function call to RevAnalysis_Menu.hpp
             break;
         case 3:     // Show Summary
             //summary(Review_Data, PosWord_Data, NegWord_Data, CSV_lines, POS_WORDS, NEG_WORDS);

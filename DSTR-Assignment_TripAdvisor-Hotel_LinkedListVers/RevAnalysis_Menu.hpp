@@ -3,111 +3,129 @@
 
 #include <iostream>
 #include "RevAnalysisCalc.hpp"
-#include "ReadInput.hpp"
+#include "DataStruc.hpp"
 using namespace std;
 
-void display_POS_NEG(string* foundPosWords, string* foundNegWords, int posCount, int negCount);
+void display_POS_NEG(PowWord* foundPosWords, NegWord* foundNegWords, int posCount, int negCount);
 string Define_AnlysOutput(double sentimentScore, string curRating);
 
-
-inline void countSentimentWord(ReviewAndRating Review_Data, string* PosWord_Data, string* NegWord_Data, const int lineNum, const int POS_WORDS, const int NEG_WORDS) {
+inline void countSentimentWord(ReviewAndRating* RevRat_Head, PowWord* PosWord_Head, NegWord* NegWord_Head, const int lineNum) {
     AnalysisCalc calculator;
 
-        int reviewNum = 0;
-        do {
-            // Title design
-            cout << "\n \n \n";
-            cout << "\033[0;34m"; // Set the text color to bright blue
-            cout << "---------------------------------------" << endl;
-            cout << "            Review Analysis            " << endl;
-            cout << "---------------------------------------" << endl;
+    int reviewNum = 0;
+    ReviewAndRating* reviewTrav = RevRat_Head;  // Start traversal from the head of the reviews list
+
+    do {
+        cout << "\n \n \n";
+        cout << "\033[0;34m"; // Set the text color to bright blue
+        cout << "---------------------------------------" << endl;
+        cout << "            Review Analysis            " << endl;
+        cout << "---------------------------------------" << endl;
+        cout << "\033[0m";
+        cout << "\n";
+
+        cout << "There are total " << lineNum << " reviews \n";
+        cout << "Select review from 1 to " << lineNum << " for analysis. Enter 0 back to main" << endl;
+        cout << "Enter review number: ";
+        cin >> reviewNum;
+        cout << "\n";
+
+        if (reviewNum > 0 && reviewNum <= lineNum) {
+            // Reset found words for a new analysis
+            PowWord* foundPosWords = nullptr;
+            NegWord* foundNegWords = nullptr;
+            int posCount = 0, negCount = 0;
+
+            // Traverse to the selected review
+            ReviewAndRating* reviewTrav = RevRat_Head;
+            for (int i = 1; i < reviewNum && reviewTrav != nullptr; i++) {
+                reviewTrav = reviewTrav->next;
+            }
+
+            if (reviewTrav == nullptr) {
+                cout << "Review not found!" << endl;
+                return;
+            }
+
+            string curReview = reviewTrav->review;
+            string curRating = reviewTrav->rating;
+
+            cout << "\033[1;33m";
+            cout << "\nReview #" << reviewNum << "\n";
             cout << "\033[0m";
-            cout << "\n";
+            cout << curReview << endl;
 
-            cout << "There are total " << lineNum << " reviews \n";
-            cout << "Select review from 1 to " << lineNum << " for analysis. Enter 0 back to main" << endl;
-            cout << "Enter review number: ";
-            cin >> reviewNum;
-            cout << "\n";
+            // Count positive and negative word occurrences
+            calculator.countOccurrences(curReview, PosWord_Head, NegWord_Head, foundPosWords, foundNegWords, posCount, negCount);
 
-            if (reviewNum > 0 && reviewNum <= lineNum) {
-                string curReview = Review_Data.review_arr[reviewNum - 1];
-                string curRating = Review_Data.rating_arr[reviewNum - 1];
+            // Calculate sentiment score
+            double sentimentScore = calculator.calculateSentimentScore(posCount, negCount);
 
-                cout << "\033[1;33m";
-                cout << "\nReview #" << reviewNum << "\n";
-                cout << "\033[0m";
-                cout << curReview << endl;
+            // Display found positive and negative words
+            display_POS_NEG(foundPosWords, foundNegWords, posCount, negCount);
 
+            cout << "\nSentiment score (1 - 5) is " << sentimentScore << ", thus the rating should be equal to " << round(sentimentScore) << " (Neutral).\n \n" << endl;
 
-                string* foundPosWords = new string[POS_WORDS];
-                string* foundNegWords = new string[NEG_WORDS];
-                int posCount = 0, negCount = 0;
+            // Display review analysis conclusion
+            string AnlysOutput = Define_AnlysOutput(sentimentScore, curRating);
 
-                // Count and collect positive and negative words
-                calculator.countOccurrences(curReview, PosWord_Data, POS_WORDS, foundPosWords, posCount);
-                calculator.countOccurrences(curReview, NegWord_Data, NEG_WORDS, foundNegWords, negCount);
+            cout << "\033[1;33m";
+            cout << "#------ Analysis Conclusion ------#" << endl;
+            cout << "\033[0m";
+            cout << "Sentiment Score(1-5) = " << round(sentimentScore) << endl;
+            cout << "Rating given by user = " << curRating << endl;
+            cout << "\nAnalysis output: \n \n" << AnlysOutput << endl;
 
-                // Calculate sentiment score
-                double sentimentScore = calculator.calculateSentimentScore(posCount, negCount);
-
-                // Display positive & negative words + sentiment score
-                display_POS_NEG(foundPosWords, foundNegWords, posCount, negCount);
-                cout << "\nSentiment score (1 - 5) is " << sentimentScore << ", thus the rating should be equal to " << round(sentimentScore) << " (Neutral).\n \n" << endl;                
-
-                // Display review analysis conclusion
-                string AnlysOutput = Define_AnlysOutput(sentimentScore, curRating);
-
-                cout << "\033[1;33m";
-                cout << "#------ Analysis Conclusion ------#" << endl;
-                cout << "\033[0m";
-                cout << "Sentiment Score(1-5) = " << round(sentimentScore) << endl;
-                cout << "Rating given by user = " << curRating << endl;
-                cout << "\nAnalysis output: \n \n" << AnlysOutput << endl;
-
-                // Clean up dynamically allocated memory for found words
-                delete[] foundPosWords;
-                delete[] foundNegWords;
-                
-            }
-            else if (reviewNum != 0) {
-                cout << "Invalid review number! Please enter a number between 1 and " << lineNum << "." << endl;
-            }
-        } while (reviewNum != 0);
+            // Clean up dynamically allocated memory for found words
+            calculator.cleanupWordList(foundPosWords);
+            calculator.cleanupWordList(foundNegWords);
+        }
+        else if (reviewNum != 0) {
+            cout << "Invalid review number! Please enter a number between 1 and " << lineNum << "." << endl;
+        }
+    } while (reviewNum != 0);
 }
 
-
 // Display posWord negWord function
-inline void display_POS_NEG(string* foundPosWords, string* foundNegWords, int posCount, int negCount) {
-    
+inline void display_POS_NEG(PowWord* foundPosWords, NegWord* foundNegWords, int posCount, int negCount) {
     // Display positive words
     cout << "\nPositive Words = " << posCount << ":\n";
-    for (int i = 0; i < posCount; i++) {
-        cout << "- " << foundPosWords[i] << endl;
+    PowWord* posWord = foundPosWords;
+    while (posWord != nullptr) {
+        cout << "- " << posWord->word << endl;
+        posWord = posWord->next;
     }
 
     // Display negative words
     cout << "\nNegative Words = " << negCount << ":\n";
-    for (int i = 0; i < negCount; i++) {
-        cout << "- " << foundNegWords[i] << endl;
+    NegWord* negWord = foundNegWords;
+    while (negWord != nullptr) {
+        cout << "- " << negWord->word << endl;
+        negWord = negWord->next;
     }
 }
 
 // Define analysis output function
 inline string Define_AnlysOutput(double sentimentScore, string curRating) {
     string AnlysOutput;
-    double Rating = stod(curRating);
+    try {
+        double Rating = stod(curRating);
 
-    if (sentimentScore > Rating) {
-        AnlysOutput = "The analysis indicates a more positive sentiment than the user’s personal rating. This suggests the user may have perceived the experience as less favorable compared to the general sentiment of the review.";
+        if (sentimentScore > Rating) {
+            AnlysOutput = "The analysis indicates a more positive sentiment than the user’s personal rating.";
+        }
+        else if (sentimentScore == Rating) {
+            AnlysOutput = "The user’s rating aligns with the sentiment score generated by the analysis.";
+        }
+        else {
+            AnlysOutput = "The analysis reflects a more negative sentiment compared to the user's higher rating.";
+        }
     }
-    else if (sentimentScore == Rating) {
-        AnlysOutput = "The user’s rating aligns with the sentiment score generated by the analysis. This indicates that the user's experience is consistent with the sentiment reflected in their review.";
-    }
-    else {
-        AnlysOutput = "The analysis reflects a more negative sentiment compared to the user's higher rating. This could suggest the user had some positive aspects in mind that were not fully captured in the review’s sentiment.";
+    catch (const std::invalid_argument& e) {
+        AnlysOutput = "Invalid rating format. Cannot compare with sentiment score.";
     }
 
     return AnlysOutput;
 }
-#endif 
+
+#endif
