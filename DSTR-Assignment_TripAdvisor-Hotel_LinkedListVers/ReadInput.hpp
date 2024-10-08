@@ -13,7 +13,7 @@ using namespace std;
 class ReadFile {
 public:
     // Read review & rating csv file function
-    inline void readCSV(ReviewAndRating*& head, ReviewAndRating*& tail,const int lineNum) {
+    inline bool readCSV(ReviewAndRating*& head, ReviewAndRating*& tail,const int lineNum) {
 
         DataIO DataIO;
         ifstream file_read("tripadvisor_hotel_reviews.csv");
@@ -32,14 +32,16 @@ public:
             }
 
             file_read.close();
+            return true;
         }
         else {
             cout << "ERROR: Unable to open tripadvisor_hotel_reviews.csv" << endl;
+            return false;
         }
     }
 
     // Read positive word text file function
-    inline void readPositiveWords(PowWord*& head, PowWord*& tail, const int lineNum) {
+    inline bool readPositiveWords(PowWord*& head, PowWord*& tail, const int lineNum) {
         
         DataIO DataIO;
         ifstream file_read("positive-words.txt");
@@ -53,14 +55,16 @@ public:
                 DataIO.Insert_PosWord(head, tail, word);
             }
             file_read.close();
+            return true;
         }
         else {
             cout << "ERROR: Unable to open positive-words.txt" << endl;
+            return false;
         }
     }
 
     // Read negative word text file function
-    inline void readNegativeWords(NegWord*& head, NegWord*& tail, const int lineNum) {
+    inline bool readNegativeWords(NegWord*& head, NegWord*& tail, const int lineNum) {
 
         DataIO DataIO;
         ifstream file_read("negative-words.txt");
@@ -74,9 +78,11 @@ public:
                 DataIO.Insert_NegWord(head, tail, word);
             }
             file_read.close();
+            return true;
         }
         else {
             cout << "ERROR: Unable to open negative-words.txt" << endl;
+            return false;
         }
     }
 

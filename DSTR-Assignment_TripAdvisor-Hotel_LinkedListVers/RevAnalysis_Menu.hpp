@@ -74,7 +74,7 @@ inline void countSentimentWord(ReviewAndRating* RevRat_Head, PowWord* PosWord_He
             cout << "\033[0m";
             cout << "Sentiment Score(1-5) = " << round(sentimentScore) << endl;
             cout << "Rating given by user = " << curRating << endl;
-            cout << "\nAnalysis output: \n \n" << AnlysOutput << endl;
+            cout << "\nAnalysis output: \n" << AnlysOutput << endl;
 
             // Clean up dynamically allocated memory for found words
             calculator.cleanupWordList(foundPosWords);

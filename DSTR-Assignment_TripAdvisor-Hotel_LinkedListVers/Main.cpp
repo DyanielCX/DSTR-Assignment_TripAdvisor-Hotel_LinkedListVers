@@ -3,7 +3,7 @@
 #include <sstream>
 #include <string>
 #include "ReadInput.hpp"
-//#include "DataRefresh_Menu.hpp"
+#include "DataRefresh_Menu.hpp"
 #include "RevAnalysis_Menu.hpp"
 //#include "Summary.hpp"
 using namespace std;
@@ -75,7 +75,7 @@ int main() {
 
         switch (program) {
         case 1:     // Refresh Data
-            //refreshData(Review_Data, PosWord_Data, NegWord_Data, CSV_lines, POS_WORDS, NEG_WORDS);
+            refreshData(RevRat_Head, RevRat_Tail, POS_Head, POS_Tail, NEG_Head, NEG_Tail, CSV_lines, POS_WORDS, NEG_WORDS);
             break;
         case 2:     // Review Analysis
             countSentimentWord(RevRat_Head, POS_Head, NEG_Head, CSV_lines);  // Function call to RevAnalysis_Menu.hpp
