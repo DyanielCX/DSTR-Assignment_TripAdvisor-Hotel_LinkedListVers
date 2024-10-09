@@ -23,10 +23,6 @@ int main() {
     PowWord* POS_Tail = nullptr;
     NegWord* NEG_Head = nullptr;
     NegWord* NEG_Tail = nullptr;
-    WordFreqNode* POS_Fre_Head = nullptr;
-    WordFreqNode* POS_Fre_Tail = nullptr;
-    WordFreqNode* NEG_Fre_Head = nullptr;
-    WordFreqNode* NEG_Fre_Tail = nullptr;
 
     fileReader.readCSV(RevRat_Head, RevRat_Tail, CSV_lines);
     fileReader.readPositiveWords(POS_Head, POS_Tail, POS_WORDS);
