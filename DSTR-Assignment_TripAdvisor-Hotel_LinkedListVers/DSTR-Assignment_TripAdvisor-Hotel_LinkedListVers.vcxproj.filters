@@ -29,11 +29,13 @@
     <Text Include="positive-words.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="positive-words.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tripadvisor_hotel_reviews.csv">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="tripadvisor_hotel_reviews.csv" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DataRefresh_Menu.hpp">
@@ -42,13 +44,22 @@
     <ClInclude Include="ReadInput.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RevAnalysis_Menu.hpp">
+    <ClInclude Include="RevAnalysis_Menu_Linear.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RevAnalysisCalc.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Summary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ternary_Function.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RevAnalysis_Menu_Tenary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="test.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

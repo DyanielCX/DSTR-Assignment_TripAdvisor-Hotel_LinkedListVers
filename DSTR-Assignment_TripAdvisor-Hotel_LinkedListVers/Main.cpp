@@ -4,7 +4,8 @@
 #include <string>
 #include "ReadInput.hpp"
 #include "DataRefresh_Menu.hpp"
-#include "RevAnalysis_Menu.hpp"
+#include "RevAnalysis_Menu_Linear.hpp"
+#include "RevAnalysis_Menu_Tenary.hpp"
 #include "Summary.hpp"
 using namespace std;
 
@@ -23,10 +24,6 @@ int main() {
     PowWord* POS_Tail = nullptr;
     NegWord* NEG_Head = nullptr;
     NegWord* NEG_Tail = nullptr;
-    WordFreqNode* POS_Fre_Head = nullptr;
-    WordFreqNode* POS_Fre_Tail = nullptr;
-    WordFreqNode* NEG_Fre_Head = nullptr;
-    WordFreqNode* NEG_Fre_Tail = nullptr;
 
     fileReader.readCSV(RevRat_Head, RevRat_Tail, CSV_lines);
     fileReader.readPositiveWords(POS_Head, POS_Tail, POS_WORDS);
@@ -61,6 +58,7 @@ int main() {
         cout << "\033[1;36m";  // Sets the text color to bright cyan
         cout << "******************************" << endl;
         cout << "*         MAIN MENU          *" << endl;
+        cout << "*    (Linked Lisr Vers.)     *" << endl;
         cout << "******************************" << endl;
         cout << "\033[0m";
         cout << "\n";
@@ -68,10 +66,11 @@ int main() {
         cout << "What do you want to do?" << endl;
         cout << "Choose your activities:" << endl;
         cout << "1. Data Refresh" << endl;
-        cout << "2. Review Analysis" << endl;
-        cout << "3. Show Summary" << endl;
-        cout << "4. Show All Positive Word" << endl;
-        cout << "5. Show All Negative Word" << endl;
+        cout << "2. Review Analysis (Linear Algorithm)" << endl;
+        cout << "3. Review Analysis (Ternary Algorithm)" << endl;
+        cout << "4. Show Summary" << endl;
+        cout << "5. Show All Positive Word" << endl;
+        cout << "6. Show All Negative Word" << endl;
         cout << "0. Exit System" << endl;
         cout << "Enter number: ";
         cin >> program;
@@ -81,17 +80,20 @@ int main() {
         case 1:     // Refresh Data
             refreshData(RevRat_Head, RevRat_Tail, POS_Head, POS_Tail, NEG_Head, NEG_Tail, CSV_lines, POS_WORDS, NEG_WORDS);
             break;
-        case 2:     // Review Analysis
+        case 2:     // Review Analysis (Linear Algorithm)
             countSentimentWord(RevRat_Head, POS_Head, NEG_Head, CSV_lines);  
             break;
-        case 3:     // Show Summary
+        case 3:     // Review Analysis (Ternary Algorithm)
+            countSentimentWord_Ternary(RevRat_Head, POS_Head, NEG_Head, CSV_lines);
+            break;
+        case 4:     // Show Summary
             summary(RevRat_Head, POS_Head, NEG_Head, CSV_lines);
             break;
-        case 4:     // Show All Positive Word
+        case 5:     // Show All Positive Word
             fileReader.showPosWord(POS_Head);
             cout << endl;
             break;
-        case 5:     // Show All Negative Word
+        case 6:     // Show All Negative Word
             fileReader.showNegWord(NEG_Head);
             cout << endl;
             break;
