@@ -9,32 +9,11 @@
 #include <chrono>
 #include <iostream>
 #include "ReadInput.hpp"
+#include "DataStruc.hpp"
 using namespace std;
 using namespace chrono;
 
-// Define the Word Frequency Node structure
-struct WordFreqNode {
-    string word;
-    int frequency;
-    WordFreqNode* next;
-
-    WordFreqNode(const string& Word, int freq = 0) {
-        word = Word;
-        frequency = freq;
-        next = nullptr;
-    }
-};
-
-// Define a Linked List Node for Min/Max Used Words
-struct WordNode {
-    string word;
-    WordNode* next;
-
-    WordNode(const string& w) : word(w), next(nullptr) {}
-};
-
 // Function prototypes
-inline void displayWordFreq(WordFreqNode* head, const string& wordType);
 inline void CheckWordOcc(string curReview, PowWord* posHead, NegWord* negHead, int& totalPosCount, int& totalNegCount);
 inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, WordNode*& minUsedWordsHead, WordNode*& maxUsedWordsHead, int& minFreq, int& maxFreq);
 inline void displayWordUsage(WordNode* wordList, int freq, const string& usageType);

@@ -50,6 +50,16 @@ struct NegWord {
     }
 };
 
+
+
+// Define a Linked List Node for Min/Max Used Words
+struct WordNode {
+    string word;
+    WordNode* next;
+
+    WordNode(const string& w) : word(w), next(nullptr) {}
+};
+
 class DataIO {
 public:
     // Insert review & rating function
