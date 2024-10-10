@@ -7,7 +7,7 @@ using namespace std;
 
 class Ternary_fucn {
 public:
-    // Find index function
+    // Find data position function
     ReviewAndRating* ternarySearchReview(ReviewAndRating* head, int reviewNum, int totalCount) {
         if (reviewNum < 1 || reviewNum > totalCount) return nullptr;
 
@@ -48,6 +48,7 @@ public:
             // Search the middle segment
             return ternarySearchReview(mid1_Node->next, reviewNum - mid1_Index, mid2_Index - mid1_Index);
         }
+        return nullptr;
     }
 
 };

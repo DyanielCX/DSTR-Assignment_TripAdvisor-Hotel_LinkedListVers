@@ -19,7 +19,7 @@ int main() {
 
     // Default data load
     ReviewAndRating* RevRat_Head = nullptr;
-    ReviewAndRating* RevRat_Tail = nullptr;
+    ReviewAndRating* RevRat_Tail = nullptr; 
     PowWord* POS_Head = nullptr;
     PowWord* POS_Tail = nullptr;
     NegWord* NEG_Head = nullptr;

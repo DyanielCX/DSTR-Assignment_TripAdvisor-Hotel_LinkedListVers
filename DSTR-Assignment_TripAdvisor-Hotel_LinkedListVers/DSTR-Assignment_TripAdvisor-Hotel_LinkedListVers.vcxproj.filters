@@ -30,11 +30,14 @@
       <Filter>Resource Files</Filter>
     </Text>
     <Text Include="positive-words.txt" />
+    <Text Include="negative-words.txt" />
+    <Text Include="positive-words.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tripadvisor_hotel_reviews.csv">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="tripadvisor_hotel_reviews.csv" />
     <None Include="tripadvisor_hotel_reviews.csv" />
   </ItemGroup>
   <ItemGroup>
@@ -57,9 +60,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RevAnalysis_Menu_Tenary.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="test.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -145,7 +145,6 @@
     <ClInclude Include="RevAnalysis_Menu_Tenary.hpp" />
     <ClInclude Include="Summary.hpp" />
     <ClInclude Include="Ternary_Function.hpp" />
-    <ClInclude Include="test.hpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="tripadvisor_hotel_reviews.csv" />
