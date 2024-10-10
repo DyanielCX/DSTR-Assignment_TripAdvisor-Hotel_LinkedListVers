@@ -49,7 +49,7 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     }
 
     // Title design
-    cout << "\n \n";
+    cout << "\n\n";
     cout << "\033[0;34m"; // Set the text color to bright blue
     cout << "---------------------------------------" << endl;
     cout << "            Review Summary             " << endl;
@@ -70,16 +70,14 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     cout << "\nFrequency of Positive Words:\n";
     PowWord* posCurrent = posHead;
     while (posCurrent != nullptr) {
-        // Display words even if they are used 0 times
-        cout << posCurrent->word << " = " << posCurrent->frequency << " times\n";
+        cout << posCurrent->word << " = " << posCurrent->frequency << " times\n";  // Display even 0 times
         posCurrent = posCurrent->next;
     }
 
     cout << "\nFrequency of Negative Words:\n";
     NegWord* negCurrent = negHead;
     while (negCurrent != nullptr) {
-        // Display words even if they are used 0 times
-        cout << negCurrent->word << " = " << negCurrent->frequency << " times\n";
+        cout << negCurrent->word << " = " << negCurrent->frequency << " times\n";  // Display even 0 times
         negCurrent = negCurrent->next;
     }
 
@@ -339,7 +337,7 @@ PowWord* sortedMerge(PowWord* a, PowWord* b) {
     dummy.next = nullptr;
 
     while (a != nullptr && b != nullptr) {
-        if (a->frequency >= b->frequency) { // Descending order
+        if (a->frequency >= b->frequency) {  // Descending order
             tail->next = a;
             a = a->next;
         }
@@ -368,7 +366,7 @@ NegWord* sortedMerge(NegWord* a, NegWord* b) {
     dummy.next = nullptr;
 
     while (a != nullptr && b != nullptr) {
-        if (a->frequency >= b->frequency) { // Descending order
+        if (a->frequency >= b->frequency) {  // Descending order
             tail->next = a;
             a = a->next;
         }
@@ -389,4 +387,4 @@ NegWord* sortedMerge(NegWord* a, NegWord* b) {
     return dummy.next;
 }
 
-#endif // SUMMARY_HPP
+#endif 
