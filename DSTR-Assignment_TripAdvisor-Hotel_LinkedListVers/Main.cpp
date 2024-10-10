@@ -58,7 +58,7 @@ int main() {
         cout << "\033[1;36m";  // Sets the text color to bright cyan
         cout << "******************************" << endl;
         cout << "*         MAIN MENU          *" << endl;
-        cout << "*    (Linked Lisr Vers.)     *" << endl;
+        cout << "*    (Linked List Vers.)     *" << endl;
         cout << "******************************" << endl;
         cout << "\033[0m";
         cout << "\n";
