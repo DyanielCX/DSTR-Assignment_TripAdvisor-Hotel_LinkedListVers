@@ -3,7 +3,6 @@
 
 #include <sstream>
 #include <fstream>
-#include <algorithm>
 #include <limits.h>
 #include <string>
 #include <chrono>
@@ -17,6 +16,7 @@ using namespace chrono;
 inline void CheckWordOcc(string curReview, PowWord* posHead, NegWord* negHead, int& totalPosCount, int& totalNegCount);
 inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, WordNode*& minUsedWordsHead, WordNode*& maxUsedWordsHead, int& minFreq, int& maxFreq);
 inline void displayWordUsage(WordNode* wordList, int freq, const string& usageType);
+void displaySortedWordFrequencies(PowWord* posHead, NegWord* negHead);
 void addToList(WordNode*& head, const string& word);
 void deleteList(WordNode*& head);
 
@@ -86,6 +86,8 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     // Display max & min used words
     displayWordUsage(maxUsedWordsHead, maxFreq, "Maximum");
     displayWordUsage(minUsedWordsHead, minFreq, "Minimum");
+
+    displaySortedWordFrequencies(posHead, negHead);
 
     // Clean up dynamically allocated memory for minUsedWords and maxUsedWords
     deleteList(minUsedWordsHead);
@@ -192,6 +194,108 @@ inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, WordNode*& m
         currentNeg = currentNeg->next;
     }
 }
+
+// Function to insert a word in sorted order (by frequency) within the PowWord linked list
+void insertSortedByFrequency(PowWord*& head, PowWord* newNode) {
+    // If the list is empty or the new node has the highest frequency, insert it at the beginning
+    if (head == nullptr || head->frequency < newNode->frequency) {
+        newNode->next = head;
+        if (head != nullptr) {
+            head->prev = newNode;
+        }
+        head = newNode;
+    }
+    else {
+        // Traverse the list to find the correct position to insert the new node
+        PowWord* current = head;
+        while (current->next != nullptr && current->next->frequency >= newNode->frequency) {
+            current = current->next;
+        }
+        newNode->next = current->next;
+        if (current->next != nullptr) {
+            current->next->prev = newNode;
+        }
+        current->next = newNode;
+        newNode->prev = current;
+    }
+}
+
+// Function to sort PowWord list by frequency using a new sorted list
+void sortPowWordsByFrequency(PowWord*& head) {
+    PowWord* sortedHead = nullptr;
+
+    PowWord* current = head;
+    while (current != nullptr) {
+        PowWord* nextNode = current->next;
+        current->prev = current->next = nullptr;  // Isolate the current node
+        insertSortedByFrequency(sortedHead, current);  // Insert into the sorted list
+        current = nextNode;  // Move to the next node
+    }
+
+    head = sortedHead;  // Update head to the new sorted list
+}
+
+// Function to insert a word in sorted order (by frequency) within the NegWord linked list
+void insertSortedByFrequency(NegWord*& head, NegWord* newNode) {
+    // If the list is empty or the new node has the highest frequency, insert it at the beginning
+    if (head == nullptr || head->frequency < newNode->frequency) {
+        newNode->next = head;
+        if (head != nullptr) {
+            head->prev = newNode;
+        }
+        head = newNode;
+    }
+    else {
+        // Traverse the list to find the correct position to insert the new node
+        NegWord* current = head;
+        while (current->next != nullptr && current->next->frequency >= newNode->frequency) {
+            current = current->next;
+        }
+        newNode->next = current->next;
+        if (current->next != nullptr) {
+            current->next->prev = newNode;
+        }
+        current->next = newNode;
+        newNode->prev = current;
+    }
+}
+
+// Function to sort NegWord list by frequency using a new sorted list
+void sortNegWordsByFrequency(NegWord*& head) {
+    NegWord* sortedHead = nullptr;
+
+    NegWord* current = head;
+    while (current != nullptr) {
+        NegWord* nextNode = current->next;
+        current->prev = current->next = nullptr;  // Isolate the current node
+        insertSortedByFrequency(sortedHead, current);  // Insert into the sorted list
+        current = nextNode;  // Move to the next node
+    }
+
+    head = sortedHead;  // Update head to the new sorted list
+}
+
+// Function to display the sorted word frequencies
+void displaySortedWordFrequencies(PowWord* posHead, NegWord* negHead) {
+    // Sort positive words by frequency
+    sortPowWordsByFrequency(posHead);
+    cout << "\nSorted Positive Words by Frequency:\n";
+    PowWord* posCurrent = posHead;
+    while (posCurrent != nullptr) {
+        cout << posCurrent->word << " = " << posCurrent->frequency << " times\n";
+        posCurrent = posCurrent->next;
+    }
+
+    // Sort negative words by frequency
+    sortNegWordsByFrequency(negHead);
+    cout << "\nSorted Negative Words by Frequency:\n";
+    NegWord* negCurrent = negHead;
+    while (negCurrent != nullptr) {
+        cout << negCurrent->word << " = " << negCurrent->frequency << " times\n";
+        negCurrent = negCurrent->next;
+    }
+}
+
 
 // Add a word to the linked list
 void addToList(WordNode*& head, const string& word) {
