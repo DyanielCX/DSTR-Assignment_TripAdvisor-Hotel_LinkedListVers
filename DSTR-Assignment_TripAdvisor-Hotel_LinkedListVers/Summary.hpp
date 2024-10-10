@@ -3,6 +3,7 @@
 
 #include <sstream>
 #include <fstream>
+#include <algorithm>
 #include <limits.h>
 #include <string>
 #include <chrono>
@@ -16,9 +17,14 @@ using namespace chrono;
 inline void CheckWordOcc(string curReview, PowWord* posHead, NegWord* negHead, int& totalPosCount, int& totalNegCount);
 inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, WordNode*& minUsedWordsHead, WordNode*& maxUsedWordsHead, int& minFreq, int& maxFreq);
 inline void displayWordUsage(WordNode* wordList, int freq, const string& usageType);
-void displaySortedWordFrequencies(PowWord* posHead, NegWord* negHead);
 void addToList(WordNode*& head, const string& word);
 void deleteList(WordNode*& head);
+void mergeSortIterative(PowWord*& head);
+void mergeSortIterative(NegWord*& head);
+PowWord* sortedMerge(PowWord* a, PowWord* b);
+NegWord* sortedMerge(NegWord* a, NegWord* b);
+PowWord* splitList(PowWord* head, int step);
+NegWord* splitList(NegWord* head, int step);
 
 // Main summary function
 inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negHead, const int lineNum) {
@@ -56,22 +62,24 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     cout << "Total Counts of positive words = " << totalPosCount << endl;
     cout << "Total Counts of negative words = " << totalNegCount << endl;
 
+    // Sort the lists before displaying them
+    mergeSortIterative(posHead); // Sort the positive words by frequency in descending order
+    mergeSortIterative(negHead); // Sort the negative words by frequency in descending order
+
     // Display word frequencies
     cout << "\nFrequency of Positive Words:\n";
     PowWord* posCurrent = posHead;
     while (posCurrent != nullptr) {
-        if (posCurrent->frequency > 0) {
-            cout << posCurrent->word << " = " << posCurrent->frequency << " times\n";
-        }
+        // Display words even if they are used 0 times
+        cout << posCurrent->word << " = " << posCurrent->frequency << " times\n";
         posCurrent = posCurrent->next;
     }
 
     cout << "\nFrequency of Negative Words:\n";
     NegWord* negCurrent = negHead;
     while (negCurrent != nullptr) {
-        if (negCurrent->frequency > 0) {
-            cout << negCurrent->word << " = " << negCurrent->frequency << " times\n";
-        }
+        // Display words even if they are used 0 times
+        cout << negCurrent->word << " = " << negCurrent->frequency << " times\n";
         negCurrent = negCurrent->next;
     }
 
@@ -86,8 +94,6 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     // Display max & min used words
     displayWordUsage(maxUsedWordsHead, maxFreq, "Maximum");
     displayWordUsage(minUsedWordsHead, minFreq, "Minimum");
-
-    displaySortedWordFrequencies(posHead, negHead);
 
     // Clean up dynamically allocated memory for minUsedWords and maxUsedWords
     deleteList(minUsedWordsHead);
@@ -195,108 +201,6 @@ inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, WordNode*& m
     }
 }
 
-// Function to insert a word in sorted order (by frequency) within the PowWord linked list
-void insertSortedByFrequency(PowWord*& head, PowWord* newNode) {
-    // If the list is empty or the new node has the highest frequency, insert it at the beginning
-    if (head == nullptr || head->frequency < newNode->frequency) {
-        newNode->next = head;
-        if (head != nullptr) {
-            head->prev = newNode;
-        }
-        head = newNode;
-    }
-    else {
-        // Traverse the list to find the correct position to insert the new node
-        PowWord* current = head;
-        while (current->next != nullptr && current->next->frequency >= newNode->frequency) {
-            current = current->next;
-        }
-        newNode->next = current->next;
-        if (current->next != nullptr) {
-            current->next->prev = newNode;
-        }
-        current->next = newNode;
-        newNode->prev = current;
-    }
-}
-
-// Function to sort PowWord list by frequency using a new sorted list
-void sortPowWordsByFrequency(PowWord*& head) {
-    PowWord* sortedHead = nullptr;
-
-    PowWord* current = head;
-    while (current != nullptr) {
-        PowWord* nextNode = current->next;
-        current->prev = current->next = nullptr;  // Isolate the current node
-        insertSortedByFrequency(sortedHead, current);  // Insert into the sorted list
-        current = nextNode;  // Move to the next node
-    }
-
-    head = sortedHead;  // Update head to the new sorted list
-}
-
-// Function to insert a word in sorted order (by frequency) within the NegWord linked list
-void insertSortedByFrequency(NegWord*& head, NegWord* newNode) {
-    // If the list is empty or the new node has the highest frequency, insert it at the beginning
-    if (head == nullptr || head->frequency < newNode->frequency) {
-        newNode->next = head;
-        if (head != nullptr) {
-            head->prev = newNode;
-        }
-        head = newNode;
-    }
-    else {
-        // Traverse the list to find the correct position to insert the new node
-        NegWord* current = head;
-        while (current->next != nullptr && current->next->frequency >= newNode->frequency) {
-            current = current->next;
-        }
-        newNode->next = current->next;
-        if (current->next != nullptr) {
-            current->next->prev = newNode;
-        }
-        current->next = newNode;
-        newNode->prev = current;
-    }
-}
-
-// Function to sort NegWord list by frequency using a new sorted list
-void sortNegWordsByFrequency(NegWord*& head) {
-    NegWord* sortedHead = nullptr;
-
-    NegWord* current = head;
-    while (current != nullptr) {
-        NegWord* nextNode = current->next;
-        current->prev = current->next = nullptr;  // Isolate the current node
-        insertSortedByFrequency(sortedHead, current);  // Insert into the sorted list
-        current = nextNode;  // Move to the next node
-    }
-
-    head = sortedHead;  // Update head to the new sorted list
-}
-
-// Function to display the sorted word frequencies
-void displaySortedWordFrequencies(PowWord* posHead, NegWord* negHead) {
-    // Sort positive words by frequency
-    sortPowWordsByFrequency(posHead);
-    cout << "\nSorted Positive Words by Frequency:\n";
-    PowWord* posCurrent = posHead;
-    while (posCurrent != nullptr) {
-        cout << posCurrent->word << " = " << posCurrent->frequency << " times\n";
-        posCurrent = posCurrent->next;
-    }
-
-    // Sort negative words by frequency
-    sortNegWordsByFrequency(negHead);
-    cout << "\nSorted Negative Words by Frequency:\n";
-    NegWord* negCurrent = negHead;
-    while (negCurrent != nullptr) {
-        cout << negCurrent->word << " = " << negCurrent->frequency << " times\n";
-        negCurrent = negCurrent->next;
-    }
-}
-
-
 // Add a word to the linked list
 void addToList(WordNode*& head, const string& word) {
     WordNode* newNode = new WordNode(word);
@@ -321,5 +225,168 @@ void deleteList(WordNode*& head) {
     }
 }
 
-#endif
+// Iterative merge sort for PowWord
+void mergeSortIterative(PowWord*& head) {
+    if (!head || !head->next)
+        return;
 
+    PowWord* curr;
+    PowWord* left;
+    PowWord* right;
+    PowWord* sorted;
+
+    int length = 0;
+    curr = head;
+    while (curr) {
+        ++length;
+        curr = curr->next;
+    }
+
+    for (int step = 1; step < length; step *= 2) {
+        PowWord* prevTail = nullptr;
+        PowWord* newHead = nullptr;
+        curr = head;
+        while (curr) {
+            left = curr;
+            right = splitList(left, step);
+            curr = splitList(right, step);
+
+            sorted = sortedMerge(left, right);
+            if (!newHead)
+                newHead = sorted;
+            if (prevTail)
+                prevTail->next = sorted;
+
+            while (sorted->next)
+                sorted = sorted->next;
+            prevTail = sorted;
+        }
+        head = newHead;
+    }
+}
+
+// Iterative merge sort for NegWord
+void mergeSortIterative(NegWord*& head) {
+    if (!head || !head->next)
+        return;
+
+    NegWord* curr;
+    NegWord* left;
+    NegWord* right;
+    NegWord* sorted;
+
+    int length = 0;
+    curr = head;
+    while (curr) {
+        ++length;
+        curr = curr->next;
+    }
+
+    for (int step = 1; step < length; step *= 2) {
+        NegWord* prevTail = nullptr;
+        NegWord* newHead = nullptr;
+        curr = head;
+        while (curr) {
+            left = curr;
+            right = splitList(left, step);
+            curr = splitList(right, step);
+
+            sorted = sortedMerge(left, right);
+            if (!newHead)
+                newHead = sorted;
+            if (prevTail)
+                prevTail->next = sorted;
+
+            while (sorted->next)
+                sorted = sorted->next;
+            prevTail = sorted;
+        }
+        head = newHead;
+    }
+}
+
+// Helper function to split the list into two parts (PowWord)
+PowWord* splitList(PowWord* head, int step) {
+    PowWord* curr = head;
+    for (int i = 1; curr && i < step; ++i)
+        curr = curr->next;
+    if (!curr)
+        return nullptr;
+
+    PowWord* next = curr->next;
+    curr->next = nullptr;
+    return next;
+}
+
+// Helper function to split the list into two parts (NegWord)
+NegWord* splitList(NegWord* head, int step) {
+    NegWord* curr = head;
+    for (int i = 1; curr && i < step; ++i)
+        curr = curr->next;
+    if (!curr)
+        return nullptr;
+
+    NegWord* next = curr->next;
+    curr->next = nullptr;
+    return next;
+}
+
+// Iterative sorted merge for PowWord
+PowWord* sortedMerge(PowWord* a, PowWord* b) {
+    PowWord dummy;
+    PowWord* tail = &dummy;
+
+    dummy.next = nullptr;
+
+    while (a != nullptr && b != nullptr) {
+        if (a->frequency >= b->frequency) { // Descending order
+            tail->next = a;
+            a = a->next;
+        }
+        else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next;
+    }
+
+    if (a != nullptr) {
+        tail->next = a;
+    }
+    else {
+        tail->next = b;
+    }
+
+    return dummy.next;
+}
+
+// Iterative sorted merge for NegWord
+NegWord* sortedMerge(NegWord* a, NegWord* b) {
+    NegWord dummy;
+    NegWord* tail = &dummy;
+
+    dummy.next = nullptr;
+
+    while (a != nullptr && b != nullptr) {
+        if (a->frequency >= b->frequency) { // Descending order
+            tail->next = a;
+            a = a->next;
+        }
+        else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next;
+    }
+
+    if (a != nullptr) {
+        tail->next = a;
+    }
+    else {
+        tail->next = b;
+    }
+
+    return dummy.next;
+}
+
+#endif // SUMMARY_HPP
