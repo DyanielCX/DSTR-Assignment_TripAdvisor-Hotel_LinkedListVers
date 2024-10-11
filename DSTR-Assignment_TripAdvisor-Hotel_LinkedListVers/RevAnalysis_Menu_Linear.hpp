@@ -13,7 +13,7 @@ inline void countSentimentWord(ReviewAndRating* RevRat_Head, PowWord* PosWord_He
     AnalysisCalc calculator;
 
     int reviewNum = 0;
-    ReviewAndRating* reviewTrav = RevRat_Head;  // Start traversal from the head of the reviews list
+    ReviewAndRating* reviewTrav = RevRat_Head;
 
     do {
         cout << "\n \n \n";
@@ -99,7 +99,6 @@ inline void countSentimentWord(ReviewAndRating* RevRat_Head, PowWord* PosWord_He
 
 // Display posWord negWord function
 inline void display_POS_NEG(PowWord* foundPosWords, NegWord* foundNegWords, int posCount, int negCount) {
-    // Display positive words
     cout << "\nPositive Words = " << posCount << ":\n";
     PowWord* posWord = foundPosWords;
     while (posWord != nullptr) {
@@ -107,7 +106,6 @@ inline void display_POS_NEG(PowWord* foundPosWords, NegWord* foundNegWords, int 
         posWord = posWord->next;
     }
 
-    // Display negative words
     cout << "\nNegative Words = " << negCount << ":\n";
     NegWord* negWord = foundNegWords;
     while (negWord != nullptr) {

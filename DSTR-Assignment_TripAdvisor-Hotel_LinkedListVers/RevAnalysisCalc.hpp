@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <limits.h>
 #include <string>
-#include "DataStruc.hpp".  // Use PowWord and NegWord structures
+#include "DataStruc.hpp"
 using namespace std;
 
 class AnalysisCalc {
@@ -59,7 +59,7 @@ public:
     // Calculate sentiment score
     double calculateSentimentScore(int posCount, int negCount) {
         int N = posCount + negCount;
-        if (N == 0) return 3;  // Neutral if no positive/negative words found
+        if (N == 0) return 3;
 
         int rawScore = posCount - negCount;
         int minRawScore = -N;

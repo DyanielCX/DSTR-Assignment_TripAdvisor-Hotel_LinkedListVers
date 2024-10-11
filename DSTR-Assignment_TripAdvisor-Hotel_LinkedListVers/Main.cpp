@@ -10,8 +10,8 @@
 using namespace std;
 
 const int CSV_lines = 20491;    // Number of lines in the csv file
-const int POS_WORDS = 2006;     // Number of positive words in the text file
-const int NEG_WORDS = 4783;     // Number of negative words in the text file
+const int POS_WORDS = 2008;     // Number of positive words in the text file
+const int NEG_WORDS = 4785;     // Number of negative words in the text file
 
 int main() {
     int program;
@@ -104,11 +104,6 @@ int main() {
             break;
         }
     }
-
-    //delete[] Review_Data.review_arr;
-    //delete[] Review_Data.rating_arr;
-    //delete[] PosWord_Data;
-    //delete[] NegWord_Data;
 
     return 0;
 }

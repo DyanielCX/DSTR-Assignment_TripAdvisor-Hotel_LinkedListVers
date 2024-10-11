@@ -22,14 +22,14 @@ struct ReviewAndRating {
 
 struct PowWord {
     string word;
-    int frequency;  // Added frequency field
+    int frequency;
     PowWord* prev;
     PowWord* next;
 
     // Default constructor
     PowWord() {
-        word = "";  // Empty string for word
-        frequency = 0;  // Initialize frequency to 0
+        word = "";
+        frequency = 0;
         prev = nullptr;
         next = nullptr;
     }
@@ -37,7 +37,7 @@ struct PowWord {
     // Parameterized constructor to simplify node creation
     PowWord(const string& Word) {
         word = Word;
-        frequency = 0;  // Initialize frequency to 0
+        frequency = 0;
         prev = nullptr;
         next = nullptr;
     }
@@ -45,14 +45,14 @@ struct PowWord {
 
 struct NegWord {
     string word;
-    int frequency;  // Added frequency field
+    int frequency;
     NegWord* prev;
     NegWord* next;
 
     // Default constructor
     NegWord() {
-        word = "";  // Empty string for word
-        frequency = 0;  // Initialize frequency to 0
+        word = "";
+        frequency = 0;
         prev = nullptr;
         next = nullptr;
     }
@@ -60,7 +60,7 @@ struct NegWord {
     // Parameterized constructor to simplify node creation
     NegWord(const string& Word) {
         word = Word;
-        frequency = 0;  // Initialize frequency to 0
+        frequency = 0;
         prev = nullptr;
         next = nullptr;
     }

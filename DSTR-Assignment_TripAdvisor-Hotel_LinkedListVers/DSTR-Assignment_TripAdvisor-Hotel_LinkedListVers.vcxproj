@@ -131,13 +131,6 @@
     <ClCompile Include="Main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="negative-words.txt" />
-    <Text Include="positive-words.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="tripadvisor_hotel_reviews.csv" />
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="DataRefresh_Menu.hpp" />
     <ClInclude Include="ReadInput.hpp" />
     <ClInclude Include="RevAnalysisCalc.hpp" />
@@ -145,13 +138,6 @@
     <ClInclude Include="RevAnalysis_Menu_Tenary.hpp" />
     <ClInclude Include="Summary.hpp" />
     <ClInclude Include="Ternary_Function.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="tripadvisor_hotel_reviews.csv" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="negative-words.txt" />
-    <Text Include="positive-words.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -12,7 +12,7 @@
 using namespace std;
 using namespace chrono;
 
-// Function prototypes
+// Function initial define
 inline void CheckWordOcc(string curReview, PowWord* posHead, NegWord* negHead, int& totalPosCount, int& totalNegCount);
 inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, WordNode*& minUsedWordsHead, WordNode*& maxUsedWordsHead, int& minFreq, int& maxFreq);
 inline void displayWordUsage(WordNode* wordList, int freq, const string& usageType);
@@ -25,7 +25,7 @@ NegWord* sortedMerge(NegWord* a, NegWord* b);
 PowWord* splitList(PowWord* head, int step);
 NegWord* splitList(NegWord* head, int step);
 
-// Main summary function
+// Summary function
 inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negHead, const int lineNum) {
     cout << "\nProcessing the reviews... This might take some time. Please wait." << endl;
     auto start = high_resolution_clock::now();  // Start the timer
@@ -44,7 +44,7 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
         // Check occurrences of positive and negative words
         CheckWordOcc(curReview, posHead, negHead, totalPosCount, totalNegCount);
 
-        currentReview = currentReview->next;  // Move to the next review
+        currentReview = currentReview->next;
     }
 
     // Title design
@@ -62,8 +62,8 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     cout << "Total Counts of negative words = " << totalNegCount << endl;
 
     // Sort the lists before displaying them
-    mergeSortIterative(posHead); // Sort the positive words by frequency in descending order
-    mergeSortIterative(negHead); // Sort the negative words by frequency in descending order
+    mergeSortIterative(posHead);
+    mergeSortIterative(negHead);
 
     // Display word frequencies
     cout << "\nFrequency of Positive Words:\n";
@@ -365,7 +365,7 @@ NegWord* sortedMerge(NegWord* a, NegWord* b) {
     dummy.next = nullptr;
 
     while (a != nullptr && b != nullptr) {
-        if (a->frequency >= b->frequency) {  // Descending order
+        if (a->frequency >= b->frequency) { 
             tail->next = a;
             a = a->next;
         }
