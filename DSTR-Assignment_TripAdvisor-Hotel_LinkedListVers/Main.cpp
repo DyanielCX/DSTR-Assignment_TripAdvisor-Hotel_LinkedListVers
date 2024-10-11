@@ -19,7 +19,7 @@ int main() {
 
     // Default data load
     ReviewAndRating* RevRat_Head = nullptr;
-    ReviewAndRating* RevRat_Tail = nullptr;
+    ReviewAndRating* RevRat_Tail = nullptr; 
     PowWord* POS_Head = nullptr;
     PowWord* POS_Tail = nullptr;
     NegWord* NEG_Head = nullptr;
@@ -58,7 +58,7 @@ int main() {
         cout << "\033[1;36m";  // Sets the text color to bright cyan
         cout << "******************************" << endl;
         cout << "*         MAIN MENU          *" << endl;
-        cout << "*    (Linked Lisr Vers.)     *" << endl;
+        cout << "*    (Linked List Vers.)     *" << endl;
         cout << "******************************" << endl;
         cout << "\033[0m";
         cout << "\n";

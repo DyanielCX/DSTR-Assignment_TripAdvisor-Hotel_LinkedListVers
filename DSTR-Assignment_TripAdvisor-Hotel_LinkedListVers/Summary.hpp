@@ -3,7 +3,6 @@
 
 #include <sstream>
 #include <fstream>
-#include <algorithm>
 #include <limits.h>
 #include <string>
 #include <chrono>
@@ -19,6 +18,12 @@ inline void findMinMaxUsedWords(PowWord* posHead, NegWord* negHead, WordNode*& m
 inline void displayWordUsage(WordNode* wordList, int freq, const string& usageType);
 void addToList(WordNode*& head, const string& word);
 void deleteList(WordNode*& head);
+void mergeSortIterative(PowWord*& head);
+void mergeSortIterative(NegWord*& head);
+PowWord* sortedMerge(PowWord* a, PowWord* b);
+NegWord* sortedMerge(NegWord* a, NegWord* b);
+PowWord* splitList(PowWord* head, int step);
+NegWord* splitList(NegWord* head, int step);
 
 // Main summary function
 inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negHead, const int lineNum) {
@@ -43,7 +48,7 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     }
 
     // Title design
-    cout << "\n \n";
+    cout << "\n\n";
     cout << "\033[0;34m"; // Set the text color to bright blue
     cout << "---------------------------------------" << endl;
     cout << "            Review Summary             " << endl;
@@ -56,22 +61,22 @@ inline void summary(ReviewAndRating* reviewHead, PowWord* posHead, NegWord* negH
     cout << "Total Counts of positive words = " << totalPosCount << endl;
     cout << "Total Counts of negative words = " << totalNegCount << endl;
 
+    // Sort the lists before displaying them
+    mergeSortIterative(posHead); // Sort the positive words by frequency in descending order
+    mergeSortIterative(negHead); // Sort the negative words by frequency in descending order
+
     // Display word frequencies
     cout << "\nFrequency of Positive Words:\n";
     PowWord* posCurrent = posHead;
     while (posCurrent != nullptr) {
-        if (posCurrent->frequency > 0) {
-            cout << posCurrent->word << " = " << posCurrent->frequency << " times\n";
-        }
+        cout << posCurrent->word << " = " << posCurrent->frequency << " times\n";  // Display even 0 times
         posCurrent = posCurrent->next;
     }
 
     cout << "\nFrequency of Negative Words:\n";
     NegWord* negCurrent = negHead;
     while (negCurrent != nullptr) {
-        if (negCurrent->frequency > 0) {
-            cout << negCurrent->word << " = " << negCurrent->frequency << " times\n";
-        }
+        cout << negCurrent->word << " = " << negCurrent->frequency << " times\n";  // Display even 0 times
         negCurrent = negCurrent->next;
     }
 
@@ -217,5 +222,168 @@ void deleteList(WordNode*& head) {
     }
 }
 
-#endif
+// Iterative merge sort for PowWord
+void mergeSortIterative(PowWord*& head) {
+    if (!head || !head->next)
+        return;
 
+    PowWord* curr;
+    PowWord* left;
+    PowWord* right;
+    PowWord* sorted;
+
+    int length = 0;
+    curr = head;
+    while (curr) {
+        ++length;
+        curr = curr->next;
+    }
+
+    for (int step = 1; step < length; step *= 2) {
+        PowWord* prevTail = nullptr;
+        PowWord* newHead = nullptr;
+        curr = head;
+        while (curr) {
+            left = curr;
+            right = splitList(left, step);
+            curr = splitList(right, step);
+
+            sorted = sortedMerge(left, right);
+            if (!newHead)
+                newHead = sorted;
+            if (prevTail)
+                prevTail->next = sorted;
+
+            while (sorted->next)
+                sorted = sorted->next;
+            prevTail = sorted;
+        }
+        head = newHead;
+    }
+}
+
+// Iterative merge sort for NegWord
+void mergeSortIterative(NegWord*& head) {
+    if (!head || !head->next)
+        return;
+
+    NegWord* curr;
+    NegWord* left;
+    NegWord* right;
+    NegWord* sorted;
+
+    int length = 0;
+    curr = head;
+    while (curr) {
+        ++length;
+        curr = curr->next;
+    }
+
+    for (int step = 1; step < length; step *= 2) {
+        NegWord* prevTail = nullptr;
+        NegWord* newHead = nullptr;
+        curr = head;
+        while (curr) {
+            left = curr;
+            right = splitList(left, step);
+            curr = splitList(right, step);
+
+            sorted = sortedMerge(left, right);
+            if (!newHead)
+                newHead = sorted;
+            if (prevTail)
+                prevTail->next = sorted;
+
+            while (sorted->next)
+                sorted = sorted->next;
+            prevTail = sorted;
+        }
+        head = newHead;
+    }
+}
+
+// Helper function to split the list into two parts (PowWord)
+PowWord* splitList(PowWord* head, int step) {
+    PowWord* curr = head;
+    for (int i = 1; curr && i < step; ++i)
+        curr = curr->next;
+    if (!curr)
+        return nullptr;
+
+    PowWord* next = curr->next;
+    curr->next = nullptr;
+    return next;
+}
+
+// Helper function to split the list into two parts (NegWord)
+NegWord* splitList(NegWord* head, int step) {
+    NegWord* curr = head;
+    for (int i = 1; curr && i < step; ++i)
+        curr = curr->next;
+    if (!curr)
+        return nullptr;
+
+    NegWord* next = curr->next;
+    curr->next = nullptr;
+    return next;
+}
+
+// Iterative sorted merge for PowWord
+PowWord* sortedMerge(PowWord* a, PowWord* b) {
+    PowWord dummy;
+    PowWord* tail = &dummy;
+
+    dummy.next = nullptr;
+
+    while (a != nullptr && b != nullptr) {
+        if (a->frequency >= b->frequency) {  // Descending order
+            tail->next = a;
+            a = a->next;
+        }
+        else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next;
+    }
+
+    if (a != nullptr) {
+        tail->next = a;
+    }
+    else {
+        tail->next = b;
+    }
+
+    return dummy.next;
+}
+
+// Iterative sorted merge for NegWord
+NegWord* sortedMerge(NegWord* a, NegWord* b) {
+    NegWord dummy;
+    NegWord* tail = &dummy;
+
+    dummy.next = nullptr;
+
+    while (a != nullptr && b != nullptr) {
+        if (a->frequency >= b->frequency) {  // Descending order
+            tail->next = a;
+            a = a->next;
+        }
+        else {
+            tail->next = b;
+            b = b->next;
+        }
+        tail = tail->next;
+    }
+
+    if (a != nullptr) {
+        tail->next = a;
+    }
+    else {
+        tail->next = b;
+    }
+
+    return dummy.next;
+}
+
+#endif 

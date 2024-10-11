@@ -26,7 +26,15 @@ struct PowWord {
     PowWord* prev;
     PowWord* next;
 
-    // Constructor to simplify node creation
+    // Default constructor
+    PowWord() {
+        word = "";  // Empty string for word
+        frequency = 0;  // Initialize frequency to 0
+        prev = nullptr;
+        next = nullptr;
+    }
+
+    // Parameterized constructor to simplify node creation
     PowWord(const string& Word) {
         word = Word;
         frequency = 0;  // Initialize frequency to 0
@@ -41,7 +49,15 @@ struct NegWord {
     NegWord* prev;
     NegWord* next;
 
-    // Constructor to simplify node creation
+    // Default constructor
+    NegWord() {
+        word = "";  // Empty string for word
+        frequency = 0;  // Initialize frequency to 0
+        prev = nullptr;
+        next = nullptr;
+    }
+
+    // Parameterized constructor to simplify node creation
     NegWord(const string& Word) {
         word = Word;
         frequency = 0;  // Initialize frequency to 0
@@ -49,6 +65,7 @@ struct NegWord {
         next = nullptr;
     }
 };
+
 
 
 
